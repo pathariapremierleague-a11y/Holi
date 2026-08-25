@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PPL Admin Panel</title>
+<style>
+:root{--bg:#080d16;--card:#111927;--line:#263247;--gold:#ffc107;--muted:#94a3b8;--green:#25d366;--red:#ef4444}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#fff;font-family:Segoe UI,Roboto,sans-serif}.wrap{max-width:1200px;margin:auto;padding:18px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}h1{font-size:24px;color:var(--gold);margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}input,select,textarea{width:100%;padding:12px;border-radius:9px;border:1px solid var(--line);background:#0b111e;color:#fff;outline:0}button{border:0;border-radius:9px;padding:11px 15px;font-weight:800;cursor:pointer}.gold{background:var(--gold);color:#000}.dark{background:#1b2638;color:#fff}.green{background:#16a34a;color:#fff}.red{background:var(--red);color:#fff}
+.login{max-width:420px;margin:8vh auto}.err{color:#ff7777;font-size:13px}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.stat{background:#0b111e;border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center}.stat b{display:block;font-size:22px;color:var(--gold)}.stat span{font-size:11px;color:var(--muted)}
+.toolbar{display:grid;grid-template-columns:1fr 170px 170px;gap:10px}.toolbar input,.toolbar select{margin:0}.tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:1050px}.table th,.table td{padding:10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.table th{color:var(--gold);font-size:11px;text-transform:uppercase}.pill{padding:4px 8px;border-radius:20px;font-size:11px;background:#253047}.pending{color:var(--gold)}.approved{color:var(--green)}.rejected{color:#ff7777}.empty{text-align:center;color:var(--muted);padding:30px}
+.modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.modalbox{max-width:760px;width:100%;max-height:92vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.item{background:#0b111e;border:1px solid var(--line);border-radius:8px;padding:10px}.item small{display:block;color:var(--muted);font-size:10px}.item b{font-size:13px;word-break:break-word}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.actions button{flex:1;min-width:130px}a{color:var(--gold)}textarea{min-height:80px;margin-top:6px}.hidden{display:none!important}
+@media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}.toolbar{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="login" class="card login"><h1>PPL Admin Login</h1><p style="color:var(--muted)">Use the Firebase Authentication admin account.</p><input id="email" type="email" placeholder="Admin email" style="margin:12px 0"><input id="password" type="password" placeholder="Password"><button class="gold" style="width:100%;margin-top:10px" onclick="login()">Login</button><p id="err" class="err"></p></div>
+
+<div id="app" class="wrap hidden">
+<div class="top"><div><h1>PATHARIA PREMIER LEAGUE</h1><small style="color:var(--muted)">Admin • Verification • Token Management</small></div><button class="dark" onclick="auth.signOut()">Logout</button></div>
+<div class="stats"><div class="stat"><b id="total">0</b><span>Total</span></div><div class="stat"><b id="pending">0</b><span>Pending</span></div><div class="stat"><b id="approved">0</b><span>Approved</span></div><div class="stat"><b id="rejected">0</b><span>Rejected</span></div><div class="stat"><b id="teams">0</b><span>Teams</span></div></div>
+<div class="card"><div class="toolbar"><input id="search" placeholder="Search name, token, UTR, phone..." oninput="render()"><select id="status" onchange="render()"><option value="">All status</option><option>Pending</option><option>Approved</option><option>Rejected</option></select><select id="type" onchange="render()"><option value="">All types</option><option>Senior</option><option>Junior</option><option>Team</option></select></div></div>
+<div class="card"><div class="tablewrap"><table class="table"><thead><tr><th>Token</th><th>Name / Team</th><th>Type</th><th>Status</th><th>Phone</th><th>UTR</th><th>Created</th><th>Action</th></tr></thead><tbody id="rows"></tbody></table></div><div id="empty" class="empty hidden">No registrations found.</div></div>
+</div>
+
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div class="modalbox"><div class="top"><h1 style="font-size:20px">Registration Verification</h1><button class="dark" onclick="closeModal()">Close</button></div><div id="details"></div></div></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyOQ8YKgPIm7eZaCKw1rShMbqZ3j5oSh_OA",authDomain:"patharia-e02ff.firebaseapp.com",projectId:"patharia-e02ff",storageBucket:"patharia-e02ff.firebasestorage.app",messagingSenderId:"932166360661",appId:"1:932166360661:web:4ae3e997483c7c913b3edc"};
+firebase.initializeApp(firebaseConfig);const auth=firebase.auth(),db=firebase.firestore();let data=[];
+auth.onAuthStateChanged(u=>{document.getElementById("login").classList.toggle("hidden",!!u);document.getElementById("app").classList.toggle("hidden",!u);if(u)load()});
+async function login(){try{await auth.signInWithEmailAndPassword(document.getElementById("email").value.trim(),document.getElementById("password").value)}catch(e){document.getElementById("err").textContent=e.message}}
+async function load(){
+ document.getElementById("rows").innerHTML='<tr><td colspan="8" class="empty">Loading...</td></tr>';
+ try{const s=await db.collection("registrations").orderBy("Created_At","desc").get();data=s.docs.map(d=>({id:d.id,...d.data()}));render()}
+ catch(e){document.getElementById("rows").innerHTML='<tr><td colspan="8" class="err">'+esc(e.message)+'</td></tr>'}
+}
+function render(){
+ const q=document.getElementById("search").value.toLowerCase(),st=document.getElementById("status").value,tp=document.getElementById("type").value;
+ const list=data.filter(x=>(!st||x.Status===st)&&(!tp||x.Registration_Type===tp)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
+ document.getElementById("total").textContent=data.length;document.getElementById("pending").textContent=data.filter(x=>x.Status==="Pending").length;document.getElementById("approved").textContent=data.filter(x=>x.Status==="Approved").length;document.getElementById("rejected").textContent=data.filter(x=>x.Status==="Rejected").length;document.getElementById("teams").textContent=data.filter(x=>x.Registration_Type==="Team").length;
+ document.getElementById("empty").classList.toggle("hidden",list.length>0);
+ document.getElementById("rows").innerHTML=list.map(x=>{let name=x.Player_Name||"-";let date=x.Created_At?.toDate?x.Created_At.toDate().toLocaleString("en-IN"):"-";return `<tr><td><b style="color:var(--gold)">${esc(x.Token_ID||"—")}</b></td><td>${esc(name)}</td><td>${esc(x.Registration_Type)}</td><td class="${String(x.Status||"Pending").toLowerCase()}">${esc(x.Status||"Pending")}</td><td>${esc(x.Phone)}</td><td>${esc(x.UTR)}</td><td>${esc(date)}</td><td><button class="gold" onclick="view('${x.id}')">Review</button></td></tr>`}).join("");
+}
+function view(id){
+ const x=data.find(a=>a.id===id);if(!x)return;
+ let f=[["Application ID",x.id],["Token",x.Token_ID||"Not assigned"],["Type",x.Registration_Type],["Name / Team",x.Player_Name],["Owner",x.Owner_Name],["DOB",x.DOB],["Phone",x.Phone],["City",x.City],["Role",x.Role],["Batting",x.Batting_Style],["Bowling",x.Bowling_Style],["Batting Order",x.Batting_Order],["Fee","₹"+(x.Fee||"")],["UTR",x.UTR],["Status",x.Status||"Pending"]];
+ let html='<div class="row">'+f.filter(a=>a[1]!==undefined&&a[1]!=="").map(a=>`<div class="item"><small>${esc(a[0])}</small><b>${esc(a[1])}</b></div>`).join("")+'</div>';
+ html+=`<div class="actions"><a href="${attr(x.Photo_URL)}" target="_blank">📸 Profile / Team Photo</a><a href="${attr(x.Document_URL)}" target="_blank">🪪 Document</a><a href="${attr(x.Payment_SS_URL)}" target="_blank">💳 Payment Screenshot</a></div>`;
+ html+=`<div style="margin-top:18px"><label style="font-size:12px;color:var(--muted)">Admin note / rejection reason</label><textarea id="note">${esc(x.Approval_Note||"")}</textarea></div>`;
+ html+=`<div class="actions">
+ <button class="green" onclick="approve('${x.id}')">✅ Approve & Assign Token</button>
+ <button class="red" onclick="reject('${x.id}')">❌ Reject</button>
+ <button class="dark" onclick="manualToken('${x.id}')">🎟️ Change Token</button>
+ <button class="dark" onclick="deleteReg('${x.id}')">🗑️ Delete</button></div>`;
+ document.getElementById("details").innerHTML=html;document.getElementById("modal").classList.add("show");
+}
+async function approve(id){
+ const x=data.find(a=>a.id===id);if(!x)return;
+ let token=x.Token_ID;
+ if(!token){token=await nextToken()}
+ const note=document.getElementById("note").value.trim();
+ if(!confirm("Approve this registration and assign token "+token+"?"))return;
+ await db.collection("registrations").doc(id).update({Status:"Approved",Token_ID:token,Approval_Note:note,Payment_Verified:true,Verified_At:firebase.firestore.FieldValue.serverTimestamp(),Updated_At:firebase.firestore.FieldValue.serverTimestamp()});
+ closeModal();await load();
+}
+async function reject(id){
+ const note=document.getElementById("note").value.trim();if(!note){alert("Enter rejection reason in the note box.");return}
+ if(!confirm("Reject this registration?"))return;
+ await db.collection("registrations").doc(id).update({Status:"Rejected",Approval_Note:note,Payment_Verified:false,Updated_At:firebase.firestore.FieldValue.serverTimestamp()});
+ closeModal();await load();
+}
+async function nextToken(){
+ const s=await db.collection("registrations").where("Status","==","Approved").get();
+ let max=0;s.forEach(d=>{const m=String(d.data().Token_ID||"").match(/PPL-(\\d+)/);if(m)max=Math.max(max,Number(m[1]))});
+ return "PPL-"+String(max+1).padStart(4,"0");
+}
+async function manualToken(id){
+ const x=data.find(a=>a.id===id),current=x.Token_ID||"";const token=prompt("Enter token number (example: PPL-0012):",current);
+ if(!token)return;if(!/^PPL-\\d{4,6}$/.test(token)){alert("Use format PPL-0001");return}
+ if(!confirm("Save token "+token+"?"))return;
+ await db.collection("registrations").doc(id).update({Token_ID:token,Updated_At:firebase.firestore.FieldValue.serverTimestamp()});closeModal();await load();
+}
+async function deleteReg(id){if(!confirm("Permanently delete this registration?"))return;await db.collection("registrations").doc(id).delete();closeModal();await load()}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
+function attr(v){return String(v||"#").replace(/"/g,"&quot;")}
+</script>
+</body>
+</html>

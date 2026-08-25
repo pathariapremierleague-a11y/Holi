@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Patharia Premier League (PPL)</title>
+<style>
+:root{--primary:#ffc107;--bg:#080d16;--card:#111927;--text:#f8f9fa;--muted:#94a3b8;--border:#1e293b;--green:#25D366;--red:#ef4444}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,Roboto,sans-serif}
+body{background:var(--bg);color:var(--text);display:flex;justify-content:center;padding:15px 10px;min-height:100vh}.container{width:100%;max-width:480px}
+.page{display:none;animation:up .25s ease}.active{display:block}
+.poster{width:100%;border-radius:14px;overflow:hidden;margin-bottom:15px;border:1px solid var(--border);box-shadow:0 8px 25px #0009}.poster img{width:100%;display:block}
+.card{background:var(--card);border:1px solid var(--border);padding:20px;border-radius:14px;margin-bottom:15px;box-shadow:0 4px 15px #0005}
+h1,h2,h3{text-align:center;color:var(--primary);margin-bottom:8px;font-weight:800}.title{font-size:24px;text-transform:uppercase;text-shadow:0 0 18px #ffc107aa}
+p{color:var(--muted);font-size:13px;line-height:1.45}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0}.box{background:#0b111e;border:1px solid var(--border);padding:12px 8px;border-radius:10px;text-align:center}.box span{font-size:10px;color:var(--muted);text-transform:uppercase}.box b{display:block;color:var(--primary);font-size:15px;margin-top:2px}
+.btn{background:linear-gradient(135deg,#ffc107,#ff9800);color:#000;border:0;padding:14px;width:100%;border-radius:10px;font-weight:800;font-size:16px;cursor:pointer;margin-top:10px}.btn:disabled{opacity:.55}.wa{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;text-decoration:none;text-align:center;display:block}
+.tabs{display:flex;gap:7px;background:#0b111e;padding:4px;border-radius:10px;margin-bottom:15px}.tab{flex:1;padding:10px 2px;background:transparent;border:0;color:var(--muted);border-radius:8px;font-weight:bold;cursor:pointer;font-size:12px}.tab.active{background:var(--primary);color:#000}.tab small{display:block;font-size:10px;margin-top:2px}
+.group{margin-bottom:14px}.group label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600}.group input,.group select{width:100%;padding:12px;background:#0b111e;border:1px solid var(--border);color:#fff;border-radius:8px;font-size:14px}
+.qr{text-align:center;background:#0b111e;padding:15px;border-radius:10px;border:1px solid var(--border)}.qr img{width:200px;border-radius:10px;margin:10px 0;border:2px solid var(--primary)}
+.notice{background:#25d36618;border:1px solid var(--green);padding:12px;border-radius:10px;text-align:center;margin-top:15px}.notice p{color:var(--green);font-weight:bold}
+.status{padding:14px;border-radius:10px;text-align:center;margin:15px 0}.pending{background:#ffc10718;border:1px solid var(--primary);color:var(--primary)}.approved{background:#25d36618;border:1px solid var(--green);color:var(--green)}.rejected{background:#ef444418;border:1px solid var(--red);color:#ff7777}
+.pass{background:linear-gradient(180deg,#162032,#0b111e);border:1px solid var(--primary);border-radius:16px;padding:25px 20px;text-align:center}.ring{width:100px;height:100px;border-radius:50%;border:3px solid var(--primary);margin:0 auto 12px;overflow:hidden}.ring img{width:100%;height:100%;object-fit:cover}.passname{font-size:20px;font-weight:bold}.passcity{font-size:13px;color:var(--muted);margin-bottom:15px}.passgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;background:#060911;padding:12px;border-radius:8px}.passgrid small{display:block;color:var(--muted);font-size:9px}.passgrid b{font-size:13px}.hidden{display:none!important}@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div id="page1" class="page active">
+ <div class="poster"><img src="poster.jpg" alt="PPL Poster" onerror="this.style.display='none'"></div>
+ <div class="card">
+  <h1 class="title">Patharia Premier League</h1>
+  <p style="text-align:center;color:#ef4444;font-weight:800;margin-bottom:12px">AUCTION BASED TOURNAMENT</p>
+  <div class="grid">
+   <div class="box"><span>Winner Prize 🏆</span><b>₹1,00,000</b></div><div class="box"><span>Runner Up 🏆</span><b>₹40,000</b></div>
+   <div class="box"><span>Format</span><b>16 Teams</b></div><div class="box"><span>Month</span><b>October 2026</b></div>
+  </div>
+  <div class="box" style="margin-bottom:15px"><span>Location</span><b>Patharia, Damoh (M.P.)</b></div>
+  <button class="btn" onclick="showPage(2)">Choose Registration</button>
+ </div>
+ <div class="card" style="text-align:center"><p style="color:var(--primary);font-weight:bold">ORGANIZER CONTACT</p><h3 style="color:#fff">Viru Ven</h3><p style="font-size:15px;font-weight:bold">📞 9074534603</p></div>
+</div>
+
+<div id="page2" class="page">
+ <div class="card">
+  <h2>Registration Corner</h2><p style="text-align:center;margin-bottom:15px">Submit your details. Your registration will be verified by the organizer before approval.</p>
+  <div class="tabs">
+   <button class="tab active" id="tabSenior" onclick="setType('Senior')">Senior<small>₹450</small></button>
+   <button class="tab" id="tabJunior" onclick="setType('Junior')">Junior<small>₹400</small></button>
+   <button class="tab" id="tabTeam" onclick="setType('Team')">Team<small>₹15,000</small></button>
+  </div>
+  <div id="playerFields">
+   <div class="group"><label>Full Name *</label><input id="pName"></div>
+   <div class="group"><label>Date of Birth *</label><input id="pDob" type="date"></div>
+   <div class="group"><label>WhatsApp Number *</label><input id="pPhone" type="tel" maxlength="10"></div>
+   <div class="group"><label>City / Location *</label><input id="pCity"></div>
+   <div class="group"><label>Player Role *</label><select id="pRole"><option>All-rounder</option><option>Batsman</option><option>Bowler</option><option>Wicket Keeper</option></select></div>
+   <div class="group"><label>Batting Style *</label><select id="pBattingStyle"><option>Right-hand bat</option><option>Left-hand bat</option></select></div>
+   <div class="group"><label>Bowling Style *</label><select id="pBowlingStyle"><option>Right-arm fast</option><option>Right-arm medium</option><option>Left-arm fast</option><option>Off-spin</option><option>Leg-spin</option><option>None / Not Applicable</option></select></div>
+   <div class="group"><label>Preferred Batting Order *</label><select id="pBattingOrder"><option>Opening (1-2)</option><option>Top Order (3-4)</option><option>Middle Order (5-7)</option><option>Lower Order (8-11)</option></select></div>
+   <div class="group"><label>Profile Photo *</label><input id="pPhoto" type="file" accept="image/*"></div>
+   <div class="group"><label>Aadhar / Document Proof *</label><input id="pDoc" type="file" accept="image/*"></div>
+  </div>
+  <div id="teamFields" class="hidden">
+   <div class="group"><label>Team Name *</label><input id="tName"></div>
+   <div class="group"><label>Owner Name *</label><input id="tOwner"></div>
+   <div class="group"><label>Owner WhatsApp *</label><input id="tPhone" type="tel" maxlength="10"></div>
+   <div class="group"><label>City / Location *</label><input id="tCity"></div>
+   <div class="group"><label>Team Logo / Owner Photo *</label><input id="tLogo" type="file" accept="image/*"></div>
+   <div class="group"><label>Owner Document Proof *</label><input id="tAadhar" type="file" accept="image/*"></div>
+  </div>
+  <button class="btn" onclick="goPayment()">Continue to Payment</button>
+ </div>
+</div>
+
+<div id="page3" class="page">
+ <div class="card">
+  <h2>Scan & Pay</h2>
+  <div class="qr">
+   <p id="amount" style="color:var(--primary);font-size:18px;font-weight:800">Fee: ₹450</p>
+   <a id="upi" class="btn" style="display:block;text-decoration:none" href="#">📲 Direct Pay via PhonePe / GPay</a>
+   <p style="margin-top:15px">OR SCAN QR CODE TO PAY</p>
+   <img src="qr.jpg" alt="UPI QR" onerror="this.style.display='none'">
+   <p style="color:#fff;font-weight:bold">Payee: KAPIL KURMI</p><p style="color:var(--primary);font-weight:bold">UPI ID: 9399840937@ibl</p>
+  </div>
+  <div class="group"><label>UTR / Transaction ID *</label><input id="utr" maxlength="16"></div>
+  <div class="group"><label>Payment Screenshot *</label><input id="ss" type="file" accept="image/*"></div>
+  <button id="submitBtn" class="btn" onclick="submitRegistration()">Submit Registration</button>
+  <p style="margin-top:10px;text-align:center">After submission, your application will show <b>Pending Verification</b>. Token is assigned only after organizer approval.</p>
+ </div>
+</div>
+
+<div id="page4" class="page">
+ <div class="card">
+  <h2>Registration Submitted</h2>
+  <div id="statusBox" class="status pending">⏳ Pending Verification</div>
+  <p id="submissionText" style="text-align:center"></p>
+  <button class="btn" onclick="checkStatus()">Check Approval Status</button>
+ </div>
+ <div id="approvedPass" class="hidden">
+  <div class="pass">
+   <h2>PATHARIA PREMIER LEAGUE</h2><p>AUCTION BASE TOURNAMENT 2026</p>
+   <div class="ring"><img id="passPhoto" alt=""></div>
+   <div class="passname" id="passName"></div><div class="passcity" id="passCity"></div>
+   <div class="passgrid"><div><small>TOKEN NUMBER</small><b id="passToken" style="color:var(--primary)"></b></div><div><small>CATEGORY</small><b id="passCategory"></b></div><div><small>ROLE</small><b id="passRole"></b></div><div><small>UTR</small><b id="passUtr"></b></div></div>
+  </div>
+  <a id="waBtn" class="btn wa" target="_blank">📲 Send Approved Details on WhatsApp</a>
+ </div>
+ <div id="rejectedBox" class="hidden card" style="text-align:center"><h3 style="color:#ff7777">Registration Rejected</h3><p id="rejectReason"></p><p style="margin-top:8px">Please contact the organizer for clarification.</p></div>
+ <button class="btn" style="background:transparent;color:var(--muted);border:1px solid var(--border)" onclick="showPage(1)">Back to Home</button>
+</div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyOQ8YKgPIm7eZaCKw1rShMbqZ3j5oSh_OA",authDomain:"patharia-e02ff.firebaseapp.com",projectId:"patharia-e02ff",storageBucket:"patharia-e02ff.firebasestorage.app",messagingSenderId:"932166360661",appId:"1:932166360661:web:4ae3e997483c7c913b3edc"};
+firebase.initializeApp(firebaseConfig);const db=firebase.firestore();
+const IMGBB_KEY="c2a38a356263bb49d97bf903b417c244";
+let type="Senior",amount=450,registrationId=null,photoUrl="",docUrl="";
+
+function showPage(n){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById("page"+n).classList.add("active");scrollTo(0,0)}
+function setType(t){
+ type=t;amount=t==="Senior"?450:t==="Junior"?400:15000;
+ ["Senior","Junior","Team"].forEach(x=>document.getElementById("tab"+x).classList.toggle("active",x===t));
+ document.getElementById("playerFields").classList.toggle("hidden",t==="Team");
+ document.getElementById("teamFields").classList.toggle("hidden",t!=="Team");
+ document.getElementById("amount").textContent="Fee: ₹"+amount.toLocaleString("en-IN");
+ document.getElementById("upi").href=`upi://pay?pa=9399840937@ibl&pn=KAPIL%20KURMI&am=${amount}&cu=INR`;
+}
+async function upload(file){
+ if(!file)return "";
+ const fd=new FormData();fd.append("image",file);
+ try{const r=await fetch("https://api.imgbb.com/1/upload?key="+IMGBB_KEY,{method:"POST",body:fd});const j=await r.json();return j?.data?.url||""}catch(e){return ""}
+}
+function req(v){return !v||!String(v).trim()}
+function getData(){
+ if(type==="Team")return{
+  Registration_Type:type,Fee:amount,Player_Name:document.getElementById("tName").value.trim(),
+  Owner_Name:document.getElementById("tOwner").value.trim(),Phone:document.getElementById("tPhone").value.trim(),
+  City:document.getElementById("tCity").value.trim(),Role:"Team Entry",
+  photoFile:document.getElementById("tLogo").files[0],docFile:document.getElementById("tAadhar").files[0]
+ };
+ return{
+  Registration_Type:type,Fee:amount,Player_Name:document.getElementById("pName").value.trim(),
+  DOB:document.getElementById("pDob").value,Phone:document.getElementById("pPhone").value.trim(),
+  City:document.getElementById("pCity").value.trim(),Role:document.getElementById("pRole").value,
+  Batting_Style:document.getElementById("pBattingStyle").value,Bowling_Style:document.getElementById("pBowlingStyle").value,
+  Batting_Order:document.getElementById("pBattingOrder").value,photoFile:document.getElementById("pPhoto").files[0],
+  docFile:document.getElementById("pDoc").files[0]
+ };
+}
+function goPayment(){
+ const d=getData();
+ const needed=type==="Team"?[d.Player_Name,d.Owner_Name,d.Phone,d.City,d.photoFile,d.docFile]:[d.Player_Name,d.DOB,d.Phone,d.City,d.photoFile,d.docFile];
+ if(needed.some(req)){alert("Please fill all required details and upload both documents.");return}
+ if(!/^\d{10}$/.test(d.Phone)){alert("Enter a valid 10-digit WhatsApp number.");return}
+ sessionStorage.setItem("pplDraft",JSON.stringify({...d,photoFile:undefined,docFile:undefined}));
+ showPage(3);
+}
+async function submitRegistration(){
+ const d=getData(),utr=document.getElementById("utr").value.trim(),ss=document.getElementById("ss").files[0];
+ if(!utr||utr.length<10){alert("Enter a valid UTR / transaction ID.");return}
+ if(!ss){alert("Upload payment screenshot.");return}
+ const btn=document.getElementById("submitBtn");btn.disabled=true;btn.textContent="Uploading & Saving...";
+ try{
+  photoUrl=await upload(d.photoFile);docUrl=await upload(d.docFile);const ssUrl=await upload(ss);
+  if(!photoUrl||!docUrl||!ssUrl)throw new Error("One or more image uploads failed. Please try again.");
+  const payload={Registration_Type:d.Registration_Type,Fee:d.Fee,Player_Name:d.Player_Name,Owner_Name:d.Owner_Name||"",DOB:d.DOB||"",
+   Phone:d.Phone,City:d.City,Role:d.Role,Batting_Style:d.Batting_Style||"",Bowling_Style:d.Bowling_Style||"",Batting_Order:d.Batting_Order||"",
+   Photo_URL:photoUrl,Document_URL:docUrl,Payment_SS_URL:ssUrl,UTR:utr,Status:"Pending",Approval_Note:"",
+   Token_ID:"",Created_At:firebase.firestore.FieldValue.serverTimestamp(),Updated_At:firebase.firestore.FieldValue.serverTimestamp()};
+  const ref=await db.collection("registrations").add(payload);registrationId=ref.id;
+  document.getElementById("submissionText").textContent="Application ID: "+ref.id+" — save this ID to check your status on this device.";
+  localStorage.setItem("pplRegistrationId",ref.id);setStatus(payload);showPage(4);
+ }catch(e){alert(e.message)}finally{btn.disabled=false;btn.textContent="Submit Registration"}
+}
+function setStatus(x){
+ const box=document.getElementById("statusBox");document.getElementById("approvedPass").classList.add("hidden");document.getElementById("rejectedBox").classList.add("hidden");
+ if(x.Status==="Approved"){
+  box.className="status approved";box.textContent="✅ Registration Approved";
+  document.getElementById("approvedPass").classList.remove("hidden");
+  document.getElementById("passName").textContent=x.Player_Name||x.Team_Name||"";
+  document.getElementById("passCity").textContent=x.City||"";
+  document.getElementById("passToken").textContent=x.Token_ID||"";
+  document.getElementById("passCategory").textContent=x.Registration_Type+" "+(x.Registration_Type==="Team"?"":"Player");
+  document.getElementById("passRole").textContent=x.Role||"";
+  document.getElementById("passUtr").textContent=x.UTR||"";
+  document.getElementById("passPhoto").src=x.Photo_URL||"";
+  const msg=`*PATHARIA PREMIER LEAGUE - APPROVED*%0A%0A🏆 Category: ${encodeURIComponent(x.Registration_Type)}%0A👤 Name: ${encodeURIComponent(x.Player_Name||"")}%0A🎟️ Token: ${encodeURIComponent(x.Token_ID||"")}%0A📍 City: ${encodeURIComponent(x.City||"")}%0A🏏 Role: ${encodeURIComponent(x.Role||"")}%0A💳 UTR: ${encodeURIComponent(x.UTR||"")}`;
+  document.getElementById("waBtn").href="https://wa.me/919399840937?text="+msg;
+ }else if(x.Status==="Rejected"){
+  box.className="status rejected";box.textContent="❌ Registration Rejected";
+  document.getElementById("rejectedBox").classList.remove("hidden");document.getElementById("rejectReason").textContent=x.Approval_Note||"Please contact organizer.";
+ }else{box.className="status pending";box.textContent="⏳ Pending Verification"}
+}
+async function checkStatus(){
+ const id=registrationId||localStorage.getItem("pplRegistrationId");if(!id){alert("No application ID found on this device.");return}
+ try{const s=await db.collection("registrations").doc(id).get();if(!s.exists){alert("Registration not found.");return}registrationId=id;setStatus(s.data())}
+ catch(e){alert("Could not check status: "+e.message)}
+}
+setType("Senior");
+</script>
+</body>
+</html>
