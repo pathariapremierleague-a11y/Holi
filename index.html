@@ -80,7 +80,7 @@ p{color:var(--muted);font-size:13px;line-height:1.45}.grid{display:grid;grid-tem
    <a id="upi" class="btn" style="display:block;text-decoration:none" href="#">📲 Direct Pay via PhonePe / GPay</a>
    <p style="margin-top:15px">OR SCAN QR CODE TO PAY</p>
    <img src="qr.jpg" alt="UPI QR" onerror="this.style.display='none'">
-   <p style="color:#fff;font-weight:bold">Payee: KAPIL KURMI</p><p style="color:var(--primary);font-weight:bold">UPI ID: 9399840937@ibl</p>
+   <p style="color:#fff;font-weight:bold">Payee:TANMAY</p><p style="color:var(--primary);font-weight:bold">UPI ID: 6266092090@ibl</p>
   </div>
   <div class="group"><label>UTR / Transaction ID *</label><input id="utr" maxlength="16"></div>
   <div class="group"><label>Payment Screenshot *</label><input id="ss" type="file" accept="image/*"></div>
@@ -126,7 +126,7 @@ function setType(t){
  document.getElementById("playerFields").classList.toggle("hidden",t==="Team");
  document.getElementById("teamFields").classList.toggle("hidden",t!=="Team");
  document.getElementById("amount").textContent="Fee: ₹"+amount.toLocaleString("en-IN");
- document.getElementById("upi").href=`upi://pay?pa=9399840937@ibl&pn=KAPIL%20KURMI&am=${amount}&cu=INR`;
+ document.getElementById("upi").href=`upi://pay?pa=6266092090@ibl&pn=KAPIL%20KURMI&am=${amount}&cu=INR`;
 }
 async function upload(file){
  if(!file)return "";
